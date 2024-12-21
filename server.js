@@ -9,7 +9,7 @@ let clients = [];
 wss.on('connection', (ws) => {
 
     console.log("Un cliente se ha conectado");
-    ws.send('¡Felicidades, te has conectado exitosamente!');
+    ws.send(JSON.stringify({ msg: '¡Felicidades, te has conectado exitosamente!' }));
     clients.push({"con": ws, "channelId": 0});
     console.log(clients.length);
 
@@ -26,17 +26,16 @@ wss.on('connection', (ws) => {
                 console.log("Se añadió la conexión del canal "+data.channelId);
             }
             break;
-    
-            case "message":
-                let rec = clients.findIndex(x => x.channelId === parseInt(data.channelId));
-                if(rec > -1) {
-                    const client = clients[rec].con;
-                    if (client !== ws && client.readyState === WebSocket.OPEN) {
-                        client.send(data.message);
-                        console.log("Se enviado el mensaje al canal "+data.channelId);
-                    }
+        case "message":
+            let rec = clients.findIndex(x => x.channelId === parseInt(data.channelId));
+            if(rec > -1) {
+                const client = clients[rec].con;
+                if (client !== ws && client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify({ sender:  data.message.sender, platform: data.message.platform, type: data.message.type, msg: data.message.msg }));
+                    console.log("Se enviado el mensaje al canal "+data.channelId);
                 }
-            break;
+            }
+        break;
     }
 
   });
