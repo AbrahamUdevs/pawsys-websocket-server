@@ -31,7 +31,7 @@ wss.on('connection', (ws) => {
             if(rec > -1) {
                 const client = clients[rec].con;
                 if (client !== ws && client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify({ sender:  data.message.sender, platform: data.message.platform, type: data.message.type, msg: data.message.msg }));
+                    client.send(JSON.stringify({ sender:  data.message.sender, platform: data.message.platform, type: data.message.type, msg: data.message.msg, file: data.message.file }));
                     console.log("Se enviado el mensaje al canal "+data.channelId);
                 }
             }
