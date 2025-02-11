@@ -16,8 +16,6 @@ wss.on('connection', (ws) => {
   ws.on('message', (message) => {
     const data = JSON.parse(message.toString());
 
-    console.log(data);
-
     switch (data.type) {
         case "connection":
             let cli = clients.findIndex(x => x.con === ws);
@@ -36,6 +34,16 @@ wss.on('connection', (ws) => {
                 }
             }
         break;
+        case "store":
+            let cli_store = clients.findIndex(x => x.channelId === parseInt(data.channelId));
+            if(cli_store > -1) {
+                const client = clients[cli_store].con;
+                if (client !== ws && client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify({ type: "store" }));
+                    console.log("Se enviado el mensaje al canal "+data.channelId);
+                }
+            }
+          break;
     }
 
   });
