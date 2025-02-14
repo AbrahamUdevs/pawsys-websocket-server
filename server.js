@@ -44,6 +44,17 @@ wss.on('connection', (ws) => {
                 }
             }
           break;
+          
+        case "booking":
+          let cli_booking = clients.findIndex(x => x.channelId === parseInt(data.channelId));
+          if(cli_booking > -1) {
+              const client = clients[cli_booking].con;
+              if (client !== ws && client.readyState === WebSocket.OPEN) {
+                  client.send(JSON.stringify({ type: "booking" }));
+                  console.log("Se enviado el mensaje al canal "+data.channelId);
+              }
+          }
+        break;
     }
 
   });
